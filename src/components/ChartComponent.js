@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
-import { Bar } from 'react-chartjs-2';
+import { Bar, Line, Pie, Doughnut, Radar, PolarArea } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   BarElement,
+  LineElement,
+  PointElement,
+  ArcElement,
+  RadialLinearScale,
   Title,
   Tooltip,
   Legend
@@ -14,6 +18,10 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
+  LineElement,
+  PointElement,
+  ArcElement,
+  RadialLinearScale,
   Title,
   Tooltip,
   Legend
@@ -21,37 +29,62 @@ ChartJS.register(
 
 class ChartComponent extends Component {
   render() {
-    const { data } = this.props;
+    const { data, type, title } = this.props;
 
     const chartData = {
       labels: data.labels,
       datasets: [
         {
           label: 'Dataset',
-          backgroundColor: 'rgba(75,192,192,1)',
-          borderColor: 'rgba(0,0,0,1)',
+          backgroundColor: 'rgba(75,192,192,0.2)',
+          borderColor: 'rgba(75,192,192,1)',
           borderWidth: 2,
           data: data.values
         }
       ]
     };
 
+    const options = {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: title,
+          fontSize: 20
+        },
+        legend: {
+          display: true,
+          position: 'right'
+        }
+      }
+    };
+
+    let ChartComponent;
+    switch (type) {
+      case 'line':
+        ChartComponent = Line;
+        break;
+      case 'pie':
+        ChartComponent = Pie;
+        break;
+      case 'doughnut':
+        ChartComponent = Doughnut;
+        break;
+      case 'radar':
+        ChartComponent = Radar;
+        break;
+      case 'polarArea':
+        ChartComponent = PolarArea;
+        break;
+      case 'bar':
+      default:
+        ChartComponent = Bar;
+        break;
+    }
+
     return (
       <div className="chart">
-        <Bar
-          data={chartData}
-          options={{
-            title: {
-              display: true,
-              text: 'Weather Data',
-              fontSize: 20
-            },
-            legend: {
-              display: true,
-              position: 'right'
-            }
-          }}
-        />
+        <ChartComponent data={chartData} options={options} />
       </div>
     );
   }
